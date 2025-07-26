@@ -1,102 +1,74 @@
-let board = ["", "", "", "", "", "", "", "", ""];
-let currentPlayer = "X";
-let isGameActive = true;
-let isSinglePlayer = false;
+// app.js
 
-const statusDisplay = document.querySelector(".game--status");
-const cells = document.querySelectorAll(".cell");
+document.addEventListener("DOMContentLoaded", () => {
+  const mode = new URLSearchParams(window.location.search).get("mode");
+  const status = document.getElementById("status");
+  const result = document.getElementById("result");
+  const choices = document.querySelectorAll(".choice");
+  const player2Container = document.getElementById("player2-container");
 
-// Get game mode from URL
-window.onload = () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const mode = urlParams.get("mode");
-  if (mode === "single") {
-    isSinglePlayer = true;
-    statusDisplay.innerHTML = "Single Player Mode: Your Turn (X)";
+  let player1Choice = "";
+  let player2Choice = "";
+
+  if (mode === "double") {
+    player2Container.classList.remove("hidden");
+    status.textContent = "Player 1, make your choice!";
   } else {
-    statusDisplay.innerHTML = "Multiplayer Mode: Player X's Turn";
+    status.textContent = "Choose Rock, Paper or Scissors!";
   }
-};
 
-// Winning combinations
-const winningConditions = [
-  [0, 1, 2], [3, 4, 5], [6, 7, 8],  // rows
-  [0, 3, 6], [1, 4, 7], [2, 5, 8],  // columns
-  [0, 4, 8], [2, 4, 6]              // diagonals
-];
+  let currentPlayer = 1;
 
-function handleCellClick(clickedCellEvent) {
-  const clickedCell = clickedCellEvent.target;
-  const clickedIndex = parseInt(clickedCell.getAttribute("data-cell-index"));
+  choices.forEach(choice => {
+    choice.addEventListener("click", () => {
+      if (mode === "single") {
+        player1Choice = choice.dataset.choice;
+        const computerChoice = getComputerChoice();
+        const winner = getWinner(player1Choice, computerChoice);
+        showResult(player1Choice, computerChoice, winner);
+      } else {
+        if (currentPlayer === 1) {
+          player1Choice = choice.dataset.choice;
+          status.textContent = "Player 2, make your choice!";
+          currentPlayer = 2;
+        } else {
+          player2Choice = choice.dataset.choice;
+          const winner = getWinner(player1Choice, player2Choice);
+          showResult(player1Choice, player2Choice, winner);
+          currentPlayer = 1;
+          status.textContent = "Player 1, make your choice!";
+        }
+      }
+    });
+  });
 
-  if (board[clickedIndex] !== "" || !isGameActive) return;
-
-  handleCellPlayed(clickedCell, clickedIndex);
-  handleResultValidation();
-
-  if (isSinglePlayer && currentPlayer === "O" && isGameActive) {
-    setTimeout(computerMove, 500); // Delay to simulate thinking
+  function getComputerChoice() {
+    const options = ["rock", "paper", "scissors"];
+    return options[Math.floor(Math.random() * options.length)];
   }
-}
 
-function handleCellPlayed(cell, index) {
-  board[index] = currentPlayer;
-  cell.innerHTML = `<span class="text-4xl font-bold text-white">${currentPlayer}</span>`;
-}
-
-function handleResultValidation() {
-  let roundWon = false;
-  for (let i = 0; i < winningConditions.length; i++) {
-    const [a, b, c] = winningConditions[i];
-    if (board[a] && board[a] === board[b] && board[b] === board[c]) {
-      roundWon = true;
-      break;
+  function getWinner(p1, p2) {
+    if (p1 === p2) return "It's a draw!";
+    if (
+      (p1 === "rock" && p2 === "scissors") ||
+      (p1 === "paper" && p2 === "rock") ||
+      (p1 === "scissors" && p2 === "paper")
+    ) {
+      return mode === "single" ? "You win!" : "Player 1 wins!";
+    } else {
+      return mode === "single" ? "Computer wins!" : "Player 2 wins!";
     }
   }
 
-  if (roundWon) {
-    statusDisplay.innerHTML = `Player ${currentPlayer} wins! 🎉`;
-    isGameActive = false;
-    return;
+  function showResult(p1, p2, winnerText) {
+    result.innerHTML = `
+      <p class="mt-4 text-xl">Player 1 chose: <strong>${capitalize(p1)}</strong></p>
+      <p class="text-xl">${mode === "single" ? "Computer" : "Player 2"} chose: <strong>${capitalize(p2)}</strong></p>
+      <p class="mt-4 text-2xl font-bold">${winnerText}</p>
+    `;
   }
 
-  if (!board.includes("")) {
-    statusDisplay.innerHTML = "Draw!";
-    isGameActive = false;
-    return;
+  function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
   }
-
-  currentPlayer = currentPlayer === "X" ? "O" : "X";
-  if (isSinglePlayer) {
-    statusDisplay.innerHTML = `Your Turn (${currentPlayer === "X" ? "X" : "O"})`;
-  } else {
-    statusDisplay.innerHTML = `Player ${currentPlayer}'s Turn`;
-  }
-}
-
-function computerMove() {
-  const availableIndices = board
-    .map((val, idx) => (val === "" ? idx : null))
-    .filter((val) => val !== null);
-  const randomIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
-  const cell = document.querySelector(`[data-cell-index='${randomIndex}']`);
-  handleCellPlayed(cell, randomIndex);
-  handleResultValidation();
-}
-
-function restartGame() {
-  board = ["", "", "", "", "", "", "", "", ""];
-  currentPlayer = "X";
-  isGameActive = true;
-  statusDisplay.innerHTML = isSinglePlayer
-    ? "Single Player Mode: Your Turn (X)"
-    : "Multiplayer Mode: Player X's Turn";
-
-  cells.forEach((cell) => {
-    cell.innerHTML = "";
-  });
-}
-
-// Attach event listeners
-cells.forEach((cell) => cell.addEventListener("click", handleCellClick));
-document.querySelector(".game--restart").addEventListener("click", restartGame);
+});

@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rock Paper Scissors</title>
+  <title>Tic Tac Toe - Home</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron&family=Poppins&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet" />
   <style>
     body {
       font-family: 'Poppins', sans-serif;
@@ -13,7 +13,6 @@
       background-size: 300% 300%;
       animation: gradientBG 10s ease infinite;
     }
-
     @keyframes gradientBG {
       0% {background-position: 0% 50%;}
       50% {background-position: 100% 50%;}
@@ -21,24 +20,34 @@
     }
   </style>
 </head>
-<body class="min-h-screen text-white flex flex-col items-center justify-center px-4 relative">
-  <!-- Game Mode Selection -->
-  <div id="mode-selection" class="text-center z-10">
-    <!-- Logo -->
-    <img src="logo.png" alt="Game Logo" class="mx-auto w-32 md:w-48 mb-4 drop-shadow-lg" />
+<body class="min-h-screen flex flex-col justify-between">
 
-    <h1 class="text-4xl md:text-6xl font-extrabold drop-shadow-lg">Rock Paper Scissors</h1>
-    <p class="text-lg mt-4 mb-6">Choose a game mode</p>
-    <div class="flex gap-6 justify-center">
-      <a href="game.html?mode=single" class="px-6 py-3 bg-blue-500 hover:bg-blue-700 rounded-xl text-xl transition-all">Single Player</a>
-      <a href="game.html?mode=double" class="px-6 py-3 bg-green-500 hover:bg-green-700 rounded-xl text-xl transition-all">Double Player</a>
+  <nav class="w-full bg-black/30 backdrop-blur-sm py-4 px-6 flex justify-between items-center">
+    <div class="text-xl text-white font-semibold">Rock Paper Scissors</div>
+    <div class="flex gap-6 text-lg">
+      <a href="#" class="hover:text-pink-300 text-white transition">Home</a>
+      <a href="#about" class="hover:text-pink-300 text-white transition">About</a>
     </div>
-  </div>
+  </nav>
 
-  <!-- Background Effects -->
-  <div class="absolute w-full h-full top-0 left-0 z-0 pointer-events-none">
-    <div class="absolute top-20 left-10 w-40 h-40 bg-pink-500 rounded-full opacity-30 animate-ping"></div>
-    <div class="absolute bottom-20 right-10 w-60 h-60 bg-blue-500 rounded-full opacity-30 animate-pulse"></div>
-  </div>
+
+  <main class="flex items-center justify-center flex-grow">
+    <div class="bg-white bg-opacity-10 backdrop-blur-lg p-10 rounded-2xl shadow-xl max-w-sm w-full text-center">
+      <h1 class="text-4xl text-white mb-6 font-bold">Tic Tac Toe</h1>
+      <p class="text-lg text-gray-200 mb-4">Choose Game Mode:</p>
+      <div class="flex flex-col gap-4">
+        <button onclick="location.href='game.html?mode=single'" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-full transition duration-300">
+          Single Player
+        </button>
+        <button onclick="location.href='game.html?mode=double'" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-full transition duration-300">
+          Double Player
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="text-center py-4 bg-black/30 backdrop-blur-sm text-white text-sm">
+    Created with <span class="text-red-500">❤️</span> by Shivansh
+  </footer>
 </body>
 </html>
